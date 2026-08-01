@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login · School ERP</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Login page specific styles */
+    .login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: var(--bg);
+      padding: 1rem;
+    }
+
+    .login-box {
+      background: var(--white);
+      border: var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: var(--shadow);
+    }
+
+    .login-box h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+
+    .login-box .subtitle {
+      text-align: center;
+      color: var(--text-light);
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+
+    .login-box .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .login-box .form-group label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.3rem;
+    }
+
+    .login-box .form-group input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius);
+      border: var(--border);
+      font-size: 1rem;
+    }
+
+    .login-box .form-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .login-box .btn {
+      width: 100%;
+      justify-content: center;
+      padding: 0.75rem;
+      font-size: 1rem;
+    }
+
+    .login-box .error-msg {
+      color: #ef4444;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      text-align: center;
+      display: none;
+    }
+
+    .login-box .error-msg.show {
+      display: block;
+    }
+
+    .login-footer {
+      text-align: center;
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: var(--border);
+      color: var(--text-light);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-box">
+      <h1>SchoolERP</h1>
+      <p class="subtitle">Admin Login</p>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="loginEmail">Email Address</label>
+          <input type="email" id="loginEmail" placeholder="admin@smserp.com" required />
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" placeholder="Enter password" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+        <div class="error-msg" id="loginError">Invalid email or password. Please try again.</div>
+      </form>
+
+      <div class="login-footer">Yadav Web Technologies</div>
+    </div>
+  </div>
+
+  <!-- Firebase Auth Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js";
+
+    // Aapki Firebase Config (same jo pehle use ki thi)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCZ5Dlvm-VqPFw1tro8mSzjgeYnfytAmY4",
+      authDomain: "smserp-4a050.firebaseapp.com",
+      databaseURL: "https://smserp-4a050-default-rtdb.firebaseio.com",
+      projectId: "smserp-4a050",
+      storageBucket: "smserp-4a050.firebasestorage.app",
+      messagingSenderId: "929008046022",
+      appId: "1:929008046022:web:93c529551223264e966cc7",
+      measurementId: "G-X3DXVW453H"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const form = document.getElementById('loginForm');
+    const errorMsg = document.getElementById('loginError');
+
+    // Agar admin already logged in hai toh direct dashboard par bhejo
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        window.location.href = 'index.html';
+      }
+    });
+
+    // Login form submit
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      errorMsg.classList.remove('show');
+
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        // Login successful - redirect to dashboard
+        window.location.href = 'index.html';
+      } catch (error) {
+        errorMsg.classList.add('show');
+        console.error('Login error:', error.message);
+      }
+    };
+  </script>
+</body>
+</html>
