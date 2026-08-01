@@ -1,10 +1,10 @@
 // index.js - Dashboard page specific logic
 import { checkAuth, listenData } from './script.js';
 
-// ----- Auth Guard (if not logged in, redirect to login) -----
-checkAuth();
+// Auth Guard (waits for confirmation)
+await checkAuth();
 
-// ----- Dashboard Stats Load Function (Defined locally) -----
+// Dashboard Stats Load Function
 function loadDashboardStats() {
   const paths = ['students', 'teachers', 'fees', 'salaries'];
   paths.forEach(p => {
@@ -16,5 +16,5 @@ function loadDashboardStats() {
   });
 }
 
-// ----- Load Dashboard Stats -----
+// Load Dashboard Stats
 loadDashboardStats();
