@@ -1,35 +1,39 @@
-// teachers.js - Teachers Specific
-import { loadTeachers, saveTeacher, removeTeacher } from './script.js';
+// teachers.js - Handles Add + Edit for Teachers
+import { loadTeachers, saveTeacher, removeTeacher, updateTeacher } from './script.js';
 
 const tbody = document.getElementById('teacherTableBody');
 const modal = document.getElementById('teacherModal');
 const form = document.getElementById('teacherForm');
+const modalTitle = document.getElementById('teacherModalTitle');
+const submitBtn = document.getElementById('teacherSubmitBtn');
 
-// Open modal
+let editingId = null;
+
+// Open Modal for Add
 document.getElementById('openTeacherModal').onclick = () => {
+  editingId = null;
+  modalTitle.textContent = 'Add Teacher';
+  submitBtn.textContent = 'Save Teacher';
+  form.reset();
   modal.classList.add('open');
 };
 
-// Close modal (X button)
+// Close Modal (X button)
 document.getElementById('closeTeacherModal').onclick = () => {
   modal.classList.remove('open');
 };
 
-// Close modal (click outside)
+// Close Modal (click outside)
 modal.onclick = (e) => {
   if (e.target === modal) {
     modal.classList.remove('open');
   }
 };
 
-// Load and display teachers in real-time
+// Load and display teachers
 loadTeachers((teachers) => {
   if (!teachers || teachers.length === 0) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="4" class="text-center">No teachers added yet.</td>
-      </tr>
-    `;
+    tbody.innerHTML = `<tr><td colspan="4" class="text-center">No teachers added yet.</td></tr>`;
     return;
   }
 
@@ -41,23 +45,43 @@ loadTeachers((teachers) => {
         <td>${t.subject || ''}</td>
         <td>${t.phone || ''}</td>
         <td>
-          <button class="btn btn-danger" data-id="${t.id}">Delete</button>
+          <button class="btn btn-primary" data-edit-id="${t.id}" style="margin-right:0.5rem;">Edit</button>
+          <button class="btn btn-danger" data-delete-id="${t.id}">Delete</button>
         </td>
       </tr>
     `
     )
     .join('');
 
-  document.querySelectorAll('[data-id]').forEach((btn) => {
+  // Delete Logic
+  document.querySelectorAll('[data-delete-id]').forEach((btn) => {
     btn.onclick = () => {
       if (confirm('Delete this teacher?')) {
-        removeTeacher(btn.dataset.id);
+        removeTeacher(btn.dataset.deleteId);
       }
+    };
+  });
+
+  // Edit Logic
+  document.querySelectorAll('[data-edit-id]').forEach((btn) => {
+    btn.onclick = () => {
+      const id = btn.dataset.editId;
+      const teacher = teachers.find((t) => t.id === id);
+      if (!teacher) return;
+
+      editingId = id;
+      modalTitle.textContent = 'Edit Teacher';
+      submitBtn.textContent = 'Update Teacher';
+      document.getElementById('tName').value = teacher.name || '';
+      document.getElementById('tSubject').value = teacher.subject || '';
+      document.getElementById('tPhone').value = teacher.phone || '';
+
+      modal.classList.add('open');
     };
   });
 });
 
-// Handle form submission (Add Teacher)
+// Handle Form Submission (Add OR Update)
 form.onsubmit = async (e) => {
   e.preventDefault();
 
@@ -70,7 +94,14 @@ form.onsubmit = async (e) => {
     return;
   }
 
-  await saveTeacher({ name, subject, phone });
+  const data = { name, subject, phone };
+
+  if (editingId) {
+    await updateTeacher(editingId, data);
+    editingId = null;
+  } else {
+    await saveTeacher(data);
+  }
 
   form.reset();
   modal.classList.remove('open');
