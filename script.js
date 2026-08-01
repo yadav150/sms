@@ -1,7 +1,6 @@
-// script.js - Universal Firebase & Auth (Reliable Redirect)
+// script.js - Universal Firebase + Helpers (No Auth/Redirect)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js";
 import { getDatabase, ref, push, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js";
 
 // Firebase Config
 const firebaseConfig = {
@@ -18,52 +17,6 @@ const firebaseConfig = {
 // Initialize
 const app = initializeApp(firebaseConfig);
 export const db = getDatabase(app);
-export const auth = getAuth(app);
-
-// Reliable Auth Guard (Waits for Firebase confirmation)
-export function checkAuth() {
-  return new Promise((resolve) => {
-    const isLoginPage = window.location.pathname.includes('login.html');
-
-    // Quick check if user is already cached
-    if (auth.currentUser !== null) {
-      console.log("Quick check: User already logged in.");
-      if (isLoginPage) {
-        console.log("Redirecting to index.html");
-        window.location.href = 'index.html';
-      }
-      resolve();
-      return;
-    }
-
-    // Wait for Firebase to confirm the auth state
-    console.log("Waiting for Firebase to confirm auth state...");
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      unsubscribe();
-
-      if (user) {
-        console.log("Firebase confirmed: User is logged in.");
-        if (isLoginPage) {
-          console.log("Redirecting to index.html");
-          window.location.href = 'index.html';
-        }
-      } else {
-        console.log("Firebase confirmed: No user logged in.");
-        if (!isLoginPage) {
-          console.log("Redirecting to login.html");
-          window.location.href = 'login.html';
-        }
-      }
-      resolve();
-    });
-  });
-}
-
-// Logout
-export function logout() {
-  signOut(auth);
-  window.location.href = 'login.html';
-}
 
 // CRUD Helpers
 export function listenData(path, callback) {
@@ -121,6 +74,7 @@ export function markAttendance(type, date, attendanceMap) {
   const dbRef = ref(db, path);
   return set(dbRef, attendanceMap);
 }
+
 export function getAttendance(type, date, callback) {
   const path = `attendance_${type}/${date}`;
   const dbRef = ref(db, path);
@@ -129,6 +83,7 @@ export function getAttendance(type, date, callback) {
     callback(data || {});
   });
 }
+
 export function loadAllStudentsForAttendance(callback) { return listenData('students', callback); }
 export function loadAllTeachersForAttendance(callback) { return listenData('teachers', callback); }
 
