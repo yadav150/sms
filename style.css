@@ -1,6 +1,6 @@
 /* style.css - Universal Styles */
 :root {
-  --radius: 6px;
+  --radius: 8px;
   --border: 1px solid #9ca3af;
   --primary: #2563eb;
   --primary-hover: #1d4ed8;
@@ -25,7 +25,7 @@ body {
   min-height: 100vh;
 }
 
-/* ----- Sidebar ----- */
+/* Sidebar */
 .sidebar {
   width: 230px;
   background: var(--white);
@@ -92,7 +92,7 @@ body {
   stroke: white;
 }
 
-/* ----- Main Content ----- */
+/* Main Content */
 .main-content {
   flex: 1;
   padding: 2rem 2.5rem;
@@ -114,7 +114,7 @@ body {
   font-weight: 600;
 }
 
-/* ----- Cards (Dashboard) ----- */
+/* Cards (Dashboard) */
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -148,7 +148,7 @@ body {
   margin-top: 0.3rem;
 }
 
-/* ----- Universal Card / Table Wrapper ----- */
+/* Universal Card / Table Wrapper */
 .card {
   background: var(--white);
   border: var(--border);
@@ -172,7 +172,7 @@ body {
   font-weight: 600;
 }
 
-/* ----- Tables ----- */
+/* Tables */
 .table-responsive {
   overflow-x: auto;
 }
@@ -198,7 +198,7 @@ tr:hover {
   background: #f9fafb;
 }
 
-/* ----- Buttons ----- */
+/* Buttons */
 button, .btn {
   border-radius: var(--radius);
   border: var(--border);
@@ -251,7 +251,7 @@ button:hover, .btn:hover {
   border-color: #16a34a;
 }
 
-/* ----- Form Inputs ----- */
+/* Form Inputs */
 input, select, textarea {
   border-radius: var(--radius);
   border: var(--border);
@@ -286,7 +286,7 @@ input:focus, select:focus, textarea:focus {
   font-size: 0.9rem;
 }
 
-/* ----- Modal ----- */
+/* Modal */
 .modal-overlay {
   display: none;
   position: fixed;
@@ -337,7 +337,7 @@ input:focus, select:focus, textarea:focus {
   padding: 0 0.5rem;
 }
 
-/* ----- Footer ----- */
+/* Footer */
 .footer {
   margin-top: auto;
   padding-top: 2rem;
@@ -348,13 +348,13 @@ input:focus, select:focus, textarea:focus {
   padding-bottom: 0.5rem;
 }
 
-/* ----- Utility ----- */
+/* Utility */
 .text-center { text-align: center; }
 .mt-2 { margin-top: 1rem; }
 .mb-2 { margin-bottom: 1rem; }
 .flex { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
 
-/* ----- Responsive ----- */
+/* Responsive */
 @media (max-width: 768px) {
   body {
     flex-direction: column;
