@@ -64,17 +64,6 @@
       </div>
     </div>
 
-    <!-- Welcome Card -->
-    <div class="card">
-      <h2>Welcome to School ERP</h2>
-      <p>
-        Start by adding your first 
-        <a href="students.html">Student</a> or 
-        <a href="teachers.html">Teacher</a>. 
-        All data is stored securely in Firebase Realtime Database.
-      </p>
-    </div>
-
     <!-- Footer -->
     <footer class="footer">Yadav Web Technologies</footer>
   </div>
@@ -102,7 +91,6 @@
     // Check login status
     onAuthStateChanged(auth, (user) => {
       if (!user) {
-        // Not logged in -> redirect to login page
         window.location.href = 'login.html';
       }
     });
