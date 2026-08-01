@@ -1,7 +1,7 @@
-// script.js - Firebase & Global Functions (WITH AUTH GUARD)
+// script.js - Firebase & Global Functions (SMART AUTH GUARD)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js";
 import { getDatabase, ref, push, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js";
 
 // Firebase Config
 const firebaseConfig = {
@@ -19,25 +19,46 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-// ----- UNIVERSAL AUTH GUARD -----
-// Is function ko har page ke script mein call karna hai
+// ----- SMART UNIVERSAL AUTH GUARD (Login Page Exception) -----
 export function checkAuth(redirectTo = 'login.html') {
+  const currentUser = auth.currentUser;
+  // Check karo ki current page login.html hai ya nahi
+  const isLoginPage = window.location.pathname.includes('login.html');
+
+  // --- Case 1: User login page par hai ---
+  if (isLoginPage) {
+    // Agar already login hai toh dashboard bhejo (taaki wapas login na karna pade)
+    if (currentUser) {
+      window.location.href = 'index.html';
+    }
+    // Agar login nahi hai toh login page rehne do (kuch mat karo)
+    return;
+  }
+
+  // --- Case 2: User protected page par hai (students, fees, etc.) ---
+  if (!currentUser) {
+    // Agar login nahi hai toh turant login page par bhejo
+    window.location.href = redirectTo;
+    return;
+  }
+
+  // --- Case 3: User login hai aur protected page par hai ---
+  // Listener lagao taaki agar logout ho toh wapas login page bhej de
   return new Promise((resolve) => {
-    onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
-        // Agar login nahi hai toh redirect
         window.location.href = redirectTo;
       } else {
-        // Agar login hai toh aage badho
         resolve(user);
       }
+      unsubscribe();
     });
   });
 }
 
 // ----- Universal Logout Function -----
 export function logout() {
-  auth.signOut();
+  signOut(auth);
   window.location.href = 'login.html';
 }
 
