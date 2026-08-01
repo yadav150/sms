@@ -1,9 +1,9 @@
-// script.js - Universal Firebase & Auth
+// script.js - Universal Firebase & Auth (Reliable Redirect)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js";
 import { getDatabase, ref, push, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js";
 
-// ----- Firebase Config -----
+// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyCZ5Dlvm-VqPFw1tro8mSzjgeYnfytAmY4",
   authDomain: "smserp-4a050.firebaseapp.com",
@@ -15,34 +15,57 @@ const firebaseConfig = {
   measurementId: "G-X3DXVW453H"
 };
 
-// ----- Initialize -----
+// Initialize
 const app = initializeApp(firebaseConfig);
 export const db = getDatabase(app);
 export const auth = getAuth(app);
 
-// ----- AUTH GUARD (UNIVERSAL) -----
+// Reliable Auth Guard (Waits for Firebase confirmation)
 export function checkAuth() {
-  const currentUser = auth.currentUser;
-  const isLoginPage = window.location.pathname.includes('login.html');
+  return new Promise((resolve) => {
+    const isLoginPage = window.location.pathname.includes('login.html');
 
-  if (isLoginPage && currentUser) {
-    window.location.href = 'index.html';
-    return;
-  }
+    // Quick check if user is already cached
+    if (auth.currentUser !== null) {
+      console.log("Quick check: User already logged in.");
+      if (isLoginPage) {
+        console.log("Redirecting to index.html");
+        window.location.href = 'index.html';
+      }
+      resolve();
+      return;
+    }
 
-  if (!isLoginPage && !currentUser) {
-    window.location.href = 'login.html';
-    return;
-  }
+    // Wait for Firebase to confirm the auth state
+    console.log("Waiting for Firebase to confirm auth state...");
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      unsubscribe();
+
+      if (user) {
+        console.log("Firebase confirmed: User is logged in.");
+        if (isLoginPage) {
+          console.log("Redirecting to index.html");
+          window.location.href = 'index.html';
+        }
+      } else {
+        console.log("Firebase confirmed: No user logged in.");
+        if (!isLoginPage) {
+          console.log("Redirecting to login.html");
+          window.location.href = 'login.html';
+        }
+      }
+      resolve();
+    });
+  });
 }
 
-// ----- LOGOUT -----
+// Logout
 export function logout() {
   signOut(auth);
   window.location.href = 'login.html';
 }
 
-// ----- CRUD HELPERS -----
+// CRUD Helpers
 export function listenData(path, callback) {
   const dbRef = ref(db, path);
   return onValue(dbRef, (snapshot) => {
@@ -72,41 +95,27 @@ export function updateData(path, data) {
   return update(dbRef, data);
 }
 
-// ----- DASHBOARD STATS -----
-export function loadDashboardStats() {
-  const paths = ['students', 'teachers', 'fees', 'salaries'];
-  paths.forEach(p => {
-    const dbRef = ref(db, p);
-    onValue(dbRef, (snap) => {
-      const data = snap.val();
-      const count = data ? Object.keys(data).length : 0;
-      const el = document.getElementById(`count-${p}`);
-      if (el) el.textContent = count;
-    });
-  });
-}
-
-// ----- STUDENTS -----
+// Students
 export function loadStudents(callback) { return listenData('students', callback); }
 export function saveStudent(data) { return addData('students', data); }
 export function removeStudent(id) { return deleteData(`students/${id}`); }
 
-// ----- TEACHERS -----
+// Teachers
 export function loadTeachers(callback) { return listenData('teachers', callback); }
 export function saveTeacher(data) { return addData('teachers', data); }
 export function removeTeacher(id) { return deleteData(`teachers/${id}`); }
 
-// ----- FEES -----
+// Fees
 export function loadFees(callback) { return listenData('fees', callback); }
 export function saveFee(data) { return addData('fees', data); }
 export function removeFee(id) { return deleteData(`fees/${id}`); }
 
-// ----- SALARIES -----
+// Salaries
 export function loadSalaries(callback) { return listenData('salaries', callback); }
 export function saveSalary(data) { return addData('salaries', data); }
 export function removeSalary(id) { return deleteData(`salaries/${id}`); }
 
-// ----- ATTENDANCE -----
+// Attendance
 export function markAttendance(type, date, attendanceMap) {
   const path = `attendance_${type}/${date}`;
   const dbRef = ref(db, path);
@@ -123,7 +132,7 @@ export function getAttendance(type, date, callback) {
 export function loadAllStudentsForAttendance(callback) { return listenData('students', callback); }
 export function loadAllTeachersForAttendance(callback) { return listenData('teachers', callback); }
 
-// ----- SIDEBAR HIGHLIGHT (Universal) -----
+// Sidebar Highlight (Universal)
 document.addEventListener('DOMContentLoaded', () => {
   const links = document.querySelectorAll('.sidebar nav a');
   const current = location.pathname.split('/').pop() || 'index.html';
