@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="logo">SchoolERP</div>
     <nav>
@@ -38,15 +37,12 @@
     </nav>
   </aside>
 
-  <!-- Main Content -->
   <div class="main-content">
-    <!-- Page Header -->
     <div class="page-header">
       <h1>Students</h1>
       <button class="btn btn-primary" id="openStudentModal">Add Student</button>
     </div>
 
-    <!-- Student Table -->
     <div class="card">
       <div class="table-responsive">
         <table>
@@ -67,7 +63,6 @@
       </div>
     </div>
 
-    <!-- Add Student Modal -->
     <div class="modal-overlay" id="studentModal">
       <div class="modal-box">
         <div class="modal-header">
@@ -96,89 +91,10 @@
       </div>
     </div>
 
-    <!-- Footer -->
     <footer class="footer">Yadav Web Technologies</footer>
   </div>
 
-  <!-- Firebase Script -->
-  <script type="module">
-    import { loadStudents, saveStudent, removeStudent } from './script.js';
-
-    const tbody = document.getElementById('studentTableBody');
-    const modal = document.getElementById('studentModal');
-    const form = document.getElementById('studentForm');
-
-    // Open modal
-    document.getElementById('openStudentModal').onclick = () => {
-      modal.classList.add('open');
-    };
-
-    // Close modal (X button)
-    document.getElementById('closeStudentModal').onclick = () => {
-      modal.classList.remove('open');
-    };
-
-    // Close modal (click outside)
-    modal.onclick = (e) => {
-      if (e.target === modal) {
-        modal.classList.remove('open');
-      }
-    };
-
-    // Load and display students in real-time
-    loadStudents((students) => {
-      if (!students || students.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="4" class="text-center">No students added yet.</td>
-          </tr>
-        `;
-        return;
-      }
-
-      tbody.innerHTML = students
-        .map(
-          (s) => `
-          <tr>
-            <td>${s.name || ''}</td>
-            <td>${s.class || ''}</td>
-            <td>${s.phone || ''}</td>
-            <td>
-              <button class="btn btn-danger" data-id="${s.id}">Delete</button>
-            </td>
-          </tr>
-        `
-        )
-        .join('');
-
-      // Attach delete events to all delete buttons
-      document.querySelectorAll('[data-id]').forEach((btn) => {
-        btn.onclick = () => {
-          if (confirm('Delete this student?')) {
-            removeStudent(btn.dataset.id);
-          }
-        };
-      });
-    });
-
-    // Handle form submission (Add Student)
-    form.onsubmit = async (e) => {
-      e.preventDefault();
-
-      const name = document.getElementById('sName').value.trim();
-      const cls = document.getElementById('sClass').value.trim();
-      const phone = document.getElementById('sPhone').value.trim();
-
-      if (!name || !cls) {
-        alert('Name and Class are required.');
-        return;
-      }
-
-      await saveStudent({ name, class: cls, phone });
-
-      form.reset();
-      modal.classList.remove('open');
-    };
-  </script>
+  <script type="module" src="script.js"></script>
+  <script type="module" src="students.js"></script>
 </body>
 </html>
