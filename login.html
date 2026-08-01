@@ -117,12 +117,19 @@
     </div>
   </div>
 
-  <!-- Firebase Auth Script -->
+  <!-- Firebase + Auth Check Script -->
   <script type="module">
+    // Import checkAuth from universal script
+    import { checkAuth } from './script.js';
+    
+    // Agar already login hai toh dashboard par bhej do
+    // checkAuth login page ke liye smart hai: agar login hai toh index.html bhej dega
+    checkAuth();
+
+    // Firebase Auth imports (local, self-contained)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js";
 
-    // Aapki Firebase Config (same jo pehle use ki thi)
     const firebaseConfig = {
       apiKey: "AIzaSyCZ5Dlvm-VqPFw1tro8mSzjgeYnfytAmY4",
       authDomain: "smserp-4a050.firebaseapp.com",
@@ -139,13 +146,6 @@
 
     const form = document.getElementById('loginForm');
     const errorMsg = document.getElementById('loginError');
-
-    // Agar admin already logged in hai toh direct dashboard par bhejo
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        window.location.href = 'index.html';
-      }
-    });
 
     // Login form submit
     form.onsubmit = async (e) => {
