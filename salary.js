@@ -1,45 +1,54 @@
-// salary.js - Salary Specific
-import { loadSalaries, saveSalary, removeSalary, loadTeachers } from './script.js';
+// salary.js - Handles Add + Edit for Salary
+import { loadSalaries, saveSalary, removeSalary, updateSalary, loadTeachers } from './script.js';
 
 const tbody = document.getElementById('salaryTableBody');
 const modal = document.getElementById('salaryModal');
 const form = document.getElementById('salaryForm');
+const modalTitle = document.getElementById('salaryModalTitle');
+const submitBtn = document.getElementById('salarySubmitBtn');
 const teacherSelect = document.getElementById('salaryTeacher');
 
-// Open modal
-document.getElementById('openSalaryModal').onclick = () => {
+let editingId = null;
+
+// Populate teacher dropdown
+function populateTeacherDropdown(selectedId = null) {
   loadTeachers((teachers) => {
     if (!teachers || teachers.length === 0) {
       teacherSelect.innerHTML = '<option value="">No teachers found. Add a teacher first.</option>';
     } else {
       teacherSelect.innerHTML = teachers
-        .map((t) => `<option value="${t.id}">${t.name}</option>`)
+        .map((t) => `<option value="${t.id}" ${t.id === selectedId ? 'selected' : ''}>${t.name}</option>`)
         .join('');
     }
   });
+}
+
+// Open Modal for Add
+document.getElementById('openSalaryModal').onclick = () => {
+  editingId = null;
+  modalTitle.textContent = 'Add Salary';
+  submitBtn.textContent = 'Save Salary';
+  form.reset();
+  populateTeacherDropdown();
   modal.classList.add('open');
 };
 
-// Close modal (X button)
+// Close Modal (X button)
 document.getElementById('closeSalaryModal').onclick = () => {
   modal.classList.remove('open');
 };
 
-// Close modal (click outside)
+// Close Modal (click outside)
 modal.onclick = (e) => {
   if (e.target === modal) {
     modal.classList.remove('open');
   }
 };
 
-// Load and display salaries in real-time
+// Load and display salaries
 loadSalaries((salaries) => {
   if (!salaries || salaries.length === 0) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="5" class="text-center">No salary records.</td>
-      </tr>
-    `;
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center">No salary records.</td></tr>`;
     return;
   }
 
@@ -52,23 +61,45 @@ loadSalaries((salaries) => {
         <td>${s.month || ''}</td>
         <td>${s.status || 'Pending'}</td>
         <td>
-          <button class="btn btn-danger" data-id="${s.id}">Delete</button>
+          <button class="btn btn-primary" data-edit-id="${s.id}" style="margin-right:0.5rem;">Edit</button>
+          <button class="btn btn-danger" data-delete-id="${s.id}">Delete</button>
         </td>
       </tr>
     `
     )
     .join('');
 
-  document.querySelectorAll('[data-id]').forEach((btn) => {
+  // Delete Logic
+  document.querySelectorAll('[data-delete-id]').forEach((btn) => {
     btn.onclick = () => {
       if (confirm('Delete this salary record?')) {
-        removeSalary(btn.dataset.id);
+        removeSalary(btn.dataset.deleteId);
       }
+    };
+  });
+
+  // Edit Logic
+  document.querySelectorAll('[data-edit-id]').forEach((btn) => {
+    btn.onclick = () => {
+      const id = btn.dataset.editId;
+      const salary = salaries.find((s) => s.id === id);
+      if (!salary) return;
+
+      editingId = id;
+      modalTitle.textContent = 'Edit Salary';
+      submitBtn.textContent = 'Update Salary';
+
+      populateTeacherDropdown(salary.teacherId);
+      document.getElementById('salaryAmount').value = salary.amount || '';
+      document.getElementById('salaryMonth').value = salary.month || '';
+      document.getElementById('salaryStatus').value = salary.status || 'Pending';
+
+      modal.classList.add('open');
     };
   });
 });
 
-// Handle form submission (Add Salary)
+// Handle Form Submission (Add OR Update)
 form.onsubmit = async (e) => {
   e.preventDefault();
 
@@ -87,6 +118,7 @@ form.onsubmit = async (e) => {
     return;
   }
 
+  // Get teacher name
   let teacherName = '';
   await new Promise((resolve) => {
     loadTeachers((teachers) => {
@@ -96,7 +128,14 @@ form.onsubmit = async (e) => {
     });
   });
 
-  await saveSalary({ teacherId, teacherName, amount, month, status });
+  const data = { teacherId, teacherName, amount, month, status };
+
+  if (editingId) {
+    await updateSalary(editingId, data);
+    editingId = null;
+  } else {
+    await saveSalary(data);
+  }
 
   form.reset();
   modal.classList.remove('open');
