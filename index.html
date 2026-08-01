@@ -38,36 +38,17 @@
   </aside>
 
   <div class="main-content">
-    <div class="page-header">
-      <h1>Dashboard</h1>
-    </div>
-
+    <div class="page-header"><h1>Dashboard</h1></div>
     <div class="dashboard-grid">
-      <div class="stat-card">
-        <div class="label">Total Students</div>
-        <div class="value" id="count-students">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="label">Total Teachers</div>
-        <div class="value" id="count-teachers">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="label">Fee Records</div>
-        <div class="value" id="count-fees">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="label">Salary Records</div>
-        <div class="value" id="count-salaries">0</div>
-      </div>
+      <div class="stat-card"><div class="label">Total Students</div><div class="value" id="count-students">0</div></div>
+      <div class="stat-card"><div class="label">Total Teachers</div><div class="value" id="count-teachers">0</div></div>
+      <div class="stat-card"><div class="label">Fee Records</div><div class="value" id="count-fees">0</div></div>
+      <div class="stat-card"><div class="label">Salary Records</div><div class="value" id="count-salaries">0</div></div>
     </div>
-
     <footer class="footer">Yadav Web Technologies</footer>
   </div>
 
-  <script type="module">
-    import { checkAuth, loadDashboardStats } from './script.js';
-    checkAuth(); // Yeh redirect karega agar login nahi hai
-    loadDashboardStats();
-  </script>
+  <!-- Modern Module Linking -->
+  <script type="module" src="index.js"></script>
 </body>
 </html>
