@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="logo">SchoolERP</div>
     <nav>
@@ -38,15 +37,12 @@
     </nav>
   </aside>
 
-  <!-- Main Content -->
   <div class="main-content">
-    <!-- Page Header -->
     <div class="page-header">
       <h1>Teachers</h1>
       <button class="btn btn-primary" id="openTeacherModal">Add Teacher</button>
     </div>
 
-    <!-- Teacher Table -->
     <div class="card">
       <div class="table-responsive">
         <table>
@@ -67,7 +63,6 @@
       </div>
     </div>
 
-    <!-- Add Teacher Modal -->
     <div class="modal-overlay" id="teacherModal">
       <div class="modal-box">
         <div class="modal-header">
@@ -96,89 +91,10 @@
       </div>
     </div>
 
-    <!-- Footer -->
     <footer class="footer">Yadav Web Technologies</footer>
   </div>
 
-  <!-- Firebase Script -->
-  <script type="module">
-    import { loadTeachers, saveTeacher, removeTeacher } from './script.js';
-
-    const tbody = document.getElementById('teacherTableBody');
-    const modal = document.getElementById('teacherModal');
-    const form = document.getElementById('teacherForm');
-
-    // Open modal
-    document.getElementById('openTeacherModal').onclick = () => {
-      modal.classList.add('open');
-    };
-
-    // Close modal (X button)
-    document.getElementById('closeTeacherModal').onclick = () => {
-      modal.classList.remove('open');
-    };
-
-    // Close modal (click outside)
-    modal.onclick = (e) => {
-      if (e.target === modal) {
-        modal.classList.remove('open');
-      }
-    };
-
-    // Load and display teachers in real-time
-    loadTeachers((teachers) => {
-      if (!teachers || teachers.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="4" class="text-center">No teachers added yet.</td>
-          </tr>
-        `;
-        return;
-      }
-
-      tbody.innerHTML = teachers
-        .map(
-          (t) => `
-          <tr>
-            <td>${t.name || ''}</td>
-            <td>${t.subject || ''}</td>
-            <td>${t.phone || ''}</td>
-            <td>
-              <button class="btn btn-danger" data-id="${t.id}">Delete</button>
-            </td>
-          </tr>
-        `
-        )
-        .join('');
-
-      // Attach delete events to all delete buttons
-      document.querySelectorAll('[data-id]').forEach((btn) => {
-        btn.onclick = () => {
-          if (confirm('Delete this teacher?')) {
-            removeTeacher(btn.dataset.id);
-          }
-        };
-      });
-    });
-
-    // Handle form submission (Add Teacher)
-    form.onsubmit = async (e) => {
-      e.preventDefault();
-
-      const name = document.getElementById('tName').value.trim();
-      const subject = document.getElementById('tSubject').value.trim();
-      const phone = document.getElementById('tPhone').value.trim();
-
-      if (!name || !subject) {
-        alert('Name and Subject are required.');
-        return;
-      }
-
-      await saveTeacher({ name, subject, phone });
-
-      form.reset();
-      modal.classList.remove('open');
-    };
-  </script>
+  <script type="module" src="script.js"></script>
+  <script type="module" src="teachers.js"></script>
 </body>
 </html>
