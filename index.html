@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="logo">SchoolERP</div>
     <nav>
@@ -37,18 +38,38 @@
     </nav>
   </aside>
 
+  <!-- Main Content -->
   <div class="main-content">
-    <div class="page-header"><h1>Dashboard</h1></div>
-    <div class="dashboard-grid">
-      <div class="stat-card"><div class="label">Total Students</div><div class="value" id="count-students">0</div></div>
-      <div class="stat-card"><div class="label">Total Teachers</div><div class="value" id="count-teachers">0</div></div>
-      <div class="stat-card"><div class="label">Fee Records</div><div class="value" id="count-fees">0</div></div>
-      <div class="stat-card"><div class="label">Salary Records</div><div class="value" id="count-salaries">0</div></div>
+    <div class="page-header">
+      <h1>Dashboard</h1>
     </div>
+
+    <!-- Stats Cards -->
+    <div class="dashboard-grid">
+      <div class="stat-card">
+        <div class="label">Total Students</div>
+        <div class="value" id="count-students">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Total Teachers</div>
+        <div class="value" id="count-teachers">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Fee Records</div>
+        <div class="value" id="count-fees">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Salary Records</div>
+        <div class="value" id="count-salaries">0</div>
+      </div>
+    </div>
+
+    <!-- Footer -->
     <footer class="footer">Yadav Web Technologies</footer>
   </div>
 
-  <!-- Modern Module Linking -->
+  <!-- Scripts: Universal + Dashboard Specific -->
+  <script type="module" src="script.js"></script>
   <script type="module" src="index.js"></script>
 </body>
 </html>
