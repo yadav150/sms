@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="logo">SchoolERP</div>
     <nav>
@@ -38,13 +37,11 @@
     </nav>
   </aside>
 
-  <!-- Main Content -->
   <div class="main-content">
     <div class="page-header">
       <h1>Dashboard</h1>
     </div>
 
-    <!-- Stats Cards -->
     <div class="dashboard-grid">
       <div class="stat-card">
         <div class="label">Total Students</div>
@@ -64,14 +61,12 @@
       </div>
     </div>
 
-    <!-- Footer -->
     <footer class="footer">Yadav Web Technologies</footer>
   </div>
 
-  <!-- Firebase Script -->
   <script type="module">
     import { checkAuth, loadDashboardStats } from './script.js';
-    checkAuth(); // Agar login nahi hai toh login.html par bhej dega
+    checkAuth(); // Yeh redirect karega agar login nahi hai
     loadDashboardStats();
   </script>
 </body>
