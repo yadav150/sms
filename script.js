@@ -1,8 +1,9 @@
-// script.js - Firebase & Global Functions (UPDATED WITH YOUR SDK)
+// script.js - Firebase & Global Functions (WITH AUTH GUARD)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js";
 import { getDatabase, ref, push, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js";
 
-// >>>>> AAPKI DI HUI FIREBASE CONFIG (SAHI SE PASTE) <<<<<
+// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyCZ5Dlvm-VqPFw1tro8mSzjgeYnfytAmY4",
   authDomain: "smserp-4a050.firebaseapp.com",
@@ -16,6 +17,29 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const auth = getAuth(app);
+
+// ----- UNIVERSAL AUTH GUARD -----
+// Is function ko har page ke script mein call karna hai
+export function checkAuth(redirectTo = 'login.html') {
+  return new Promise((resolve) => {
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        // Agar login nahi hai toh redirect
+        window.location.href = redirectTo;
+      } else {
+        // Agar login hai toh aage badho
+        resolve(user);
+      }
+    });
+  });
+}
+
+// ----- Universal Logout Function -----
+export function logout() {
+  auth.signOut();
+  window.location.href = 'login.html';
+}
 
 // ----- Generic CRUD Helpers -----
 export function listenData(path, callback) {
