@@ -68,10 +68,10 @@
     <footer class="footer">Yadav Web Technologies</footer>
   </div>
 
-  <!-- Firebase Script - Only 3 lines needed now! -->
+  <!-- Firebase Script -->
   <script type="module">
     import { checkAuth, loadDashboardStats } from './script.js';
-    await checkAuth(); // This will redirect if not logged in
+    checkAuth(); // Agar login nahi hai toh login.html par bhej dega
     loadDashboardStats();
   </script>
 </body>
